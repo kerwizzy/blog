@@ -1,0 +1,150 @@
+<!--KBDATA:{"title":"KerslowlyRay","date":"29th April 2017 at 2:25pm","subtitle":"A slow ray tracer for implicit solids","link":"KerslowlyRay.html"}-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>KerslowlyRay | Kerwizzy's Blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="css/clean-blog.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'> -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="index.html">Kerwizzy's Blog</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+					<li>
+                        <a href="http://kerwizzy.github.io">Kerwizzy's Programming Lab</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background-image: url('PostHeaderImage_v2_scaled.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>KerslowlyRay</h1>
+                        <h2 class="subheading">A slow ray tracer for implicit solids</h2>
+                        <span class="meta">Posted by <a href="about.html">Kerwizzy</a> on 29th April 2017 at 2:25pm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+				
+				</p><p>In late March/early April of 2017, I got interested in trying to make a ray tracer. While most ray-tracers ray-trace polygons, to make things simpler (and somewhat more interesting) I decided to make my ray-tracer work on implicit solids. You may be wondering what an implicit solid is. Stated simply, implicit solids define shapes by a function, rather than a set of triangles. In polygon based modeling, shapes (such as spheres) are represented hundreds of interconnected triangles in 3D spaces. In implicit solid based modeling, shapes are represented by a single function that, when called with x, y, and z coordinates, returns whether or not a point is contained in the solid. </p><p>Implicit solid modeling has several advantages:</p><ul><li>Easy to make features of solids be defined by numeric parameters</li><li>Infinite detail</li></ul><p>However, there are several disadvantages:</p><ul><li>Hard to convert to standard, polygon-based formats</li><li>Hard to render</li><li>Sometimes slow</li><li>Does not give surface normals</li></ul><p>Now how do ray tracers work? In real life, light rays travel outward from a light source, bounce off objects, and enter our eyes (or a camera) The diagram below illustrates this basic concept.
+ 
+<img src="KerwizzyBlogData/KerslowlyRay_RealLifeIllustration.jpg"></p><p><em>A diagram illustrating how light behaves in real life. Notice that many of the rays do not reach the camera.</em></p><p>Simulating light rays this way would be realistic, but it would not be very efficient. Notice how most of the light rays do not reach the camera at all. To solve this problem, modern ray-tracers cast rays out from the <em>camera</em> and see if they hit the light source. To see how this would work, look at the below diagram.</p><p><img src="KerwizzyBlogData/KerslowlyRay_RayTracingIllustration.jpg"></p><p class="kb-caption"><em>An illustration demonstrating how a ray tracer works.</em></p><p>This method of ray tracing is obviously more efficient that just simulating all the light rays in a scene. In order to find the color for one pixel, a ray is cast outward at an angle determined by the location of the pixel and the rotation of the camera. Then, formulas are used to find out where the will first hit one of the triangles in the scene. The ray then interacts with the object, and bounces of at a new angle. When the ray is finally terminated, all the colors are calculated and the color of the pixel is written into the image. (<a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Wikipedia</a> has a good explanation of this) Most of time, hundreds of individual rays are averaged together to find the color for one pixel. </p><p>My algorithm had to be slightly different than the above. In most ray-tracing algorithms, the size, shape, etc. of objects is defined by many connected triangles. It is fairly easy to write a formula for finding the intersection point of a line (such as a ray) and a triangle. But since my ray tracer was going to work on <em>implicit solids</em> my rays would have &quot;no idea&quot; where the object was, without actually trying all the points where it could be. To solve this problem, I decided to make my rays jump forward in regular steps, checking whether or not the ray was inside an object at each step. The diagram below illustrates this. Small steps sizes are necessary for accurate images. If the step size is too large, there will be odd artifacts in the rendered image.</p><p><img src="KerwizzyBlogData/KerslowlyRay_KerslowlyRayTracingIllustration.jpg"></p><p>Notice that the rays only bounce after they are <em>inside</em> the object. Also, notice the faint, dashed rays coming out from the points where a ray first is inside the object. Because I had no way of telling which direction was in or out of an object, I made the ray try random directions until it figured out how to get out of the object. The faint rays signify unsuccessful directions that were found to be still inside the object.</p><p>Now what could my ray-tracer be useful for? Probably very few things. It has many limitations:</p><ul><li>Very slow (which is why I called it &quot;<a href="KerslowlyRay.html">KerslowlyRay</a>&quot;, as pun on &quot;Kerwizzy&quot;. See the caption on the image below for just how slow it is.) It might be possible to speed renders up by a little bit.</li><li>Not good for complex scenes</li><li>Not easy to model real world objects (e.g. trees, houses, etc.) with only functions</li><li>Not easy to create mirrors, glass, or other materials that depend on knowing the angle of the surface.</li></ul><p>However, there are a few things it might be good for:</p><ul><li>Rendering mathematical shapes (for example, 3D fractals such as a <a href="https://en.wikipedia.org/wiki/Mandelbulb">Mandelbulb</a>)</li><li>Rendering smoke that had complex changes in density, if the density could be defined mathematically</li><li>Preforming simulations of relativistic effects on light. For example, the bending of light around black holes. This might be the only thing that it would actually be good for, because this would be hard to do in standard raytracers. In <a href="KerslowlyRay.html">KerslowlyRay</a>, this would only be a matter of distorting the ray at each step.</li></ul><p>In any case, <a href="KerslowlyRay.html">KerslowlyRay</a> has been a fun project, and has taught me about other topics such as a little about vectors. If I could get it to run a lot faster, it might even be useful in some areas. In any case, it is pretty neat: a working ray tracer in under 1000 lines of Javascript!</p><p><img src="KerwizzyBlogData/KerslowlyRay_SineWave_took680174ms.png"></p><p class="kb-caption"><em>A render of a simple sine wave with a diffuse material, made with <a href="KerslowlyRay.html">KerslowlyRay</a>. This image has 100 samples and took about 11 minutes to render. The base of the sine wave is 2 units across and the step size is 0.02. Notice that the edges of the sine wave appear almost beveled in some places. This is an artifact of the large step size.</em></p>
+				
+				<BR>
+				<hr>
+				Comment on <a href='https://twitter.com/kerwizzy'>Twitter</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/kerwizzy">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/kerwizzy">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; Kerwizzy 2017</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
+
