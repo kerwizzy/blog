@@ -2,26 +2,63 @@ const fs = require("fs")
 const exec = require("child_process").exec
 
 var postname = process.argv[2]
-var year = process.argv[3]
+var postyear = process.argv[3]
 
-if (!year) {
-	year = new Date().getFullYear()
+if (!postyear) {
+	var tempDate = new Date()
+	console.log("Year undefined. Setting year to "+tempDate.getFullYear())
+	postyear = tempDate.getFullYear()
 }
 
 
 
 console.log("Processing "+postname+".html")
 
-exec('node tiddly2blog_node.js "'+year+'PostsToProcess/'+postname+'.html" > "'+year+'/'+postname+'.html"',function(error,stdout,stderr) {
+exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" post_template.html > "'+postyear+'/'+postname+'.html"',function(error,stdout,stderr) {
 	if (error) {
 		console.error("Error while processing: "+error)
 	}
 
-	var yearIndex = genIndex(year)
+	var yearIndex = genIndex(postyear)
+	
+	for (var k =0; k<yearIndex.length; k++) {
+			var post = yearIndex[k]
+			
+			post.link = post.link.substr(5) //remove the YYYY/ that gets inserted	
+	}
+	
+	var yearIndexHTML = genIndexHTML(yearIndex,"./"+postyear+"/index.html")
+	
+	var currentDir = fs.readdirSync("./")
+	
+	var years = []
+	for (var i = 0; i<currentDir.length; i++) {
+		if (!isNaN(parseInt(currentDir[i]))) {
+			years.push(currentDir[i])
+		}		
+	}
+	
+	var masterIndex = []
+	for (var j =0; j<years.length; j++) {
+		var year = years[j]
+		
+		var indexForThisYear = genIndex(year)
+		
+		
+		
+		masterIndex = masterIndex.concat(indexForThisYear)		
+	}
+	
+	var masterIndexHTML = genIndexHTML(masterIndex,"index.html")
+	
+	fs.writeFileSync("./"+postyear+"/index.html",yearIndexHTML)
+	fs.writeFileSync("index.html",masterIndexHTML)
+})
 
+function genIndexHTML(index,template) {
 	//Generate the html for the home page for the year
-	for (var i =0; i<yearIndex.length; i++) {
-		var post = yearIndex[i]
+	for (var i =0; i<index.length; i++) {
+		var post = index[i]
 		var dateWords = post.date.split(" ")
 		
 		var month = dateWords[1]
@@ -40,14 +77,14 @@ exec('node tiddly2blog_node.js "'+year+'PostsToProcess/'+postname+'.html" > "'+y
 		post.timestamp = ms
 	}
 
-	yearIndex.sort(function(post1,post2) {
+	index.sort(function(post1,post2) {
 		return post2.timestamp-post1.timestamp
 	})
 	
 	var outHTML = ""
-	for (var j = 0; j<yearIndex.length; j++) {
-		if (j < yearIndex.length) {
-			var post = yearIndex[j]
+	for (var j = 0; j<index.length; j++) {
+		if (j < index.length) {
+			var post = index[j]
 	
 			outHTML += '\n<div class="post-preview">'
 			+'\n<a href="'+post.link+'">'
@@ -84,7 +121,7 @@ exec('node tiddly2blog_node.js "'+year+'PostsToProcess/'+postname+'.html" > "'+y
 		"</ul>"
 	*/
 		
-	var indexHTML = fs.readFileSync("./"+year+"/index.html","utf-8")
+	var indexHTML = fs.readFileSync(template,"utf-8")
 	
 	var postListStartString = "<!--@@POSTLISTSTART-->"
 	var postListEndString = "<!--@@POSTLISTEND-->"
@@ -94,27 +131,29 @@ exec('node tiddly2blog_node.js "'+year+'PostsToProcess/'+postname+'.html" > "'+y
 	var postListEnd = indexHTML.indexOf(postListEndString)
 	
 	if (postListStart == -1 || postListEnd == -1) {
-		console.error("Could not find template strings to insert post list.")		
+		console.error("Could not find template strings to insert post list in "+template)		
 	} else {
 	
 		var beforePostList = indexHTML.substr(0,postListStart)
-		var afterPostList = indexHTML.substr(postListEnd)+postListEndString.length
+		var afterPostList = indexHTML.substr(postListEnd)
 				
 		indexHTML = beforePostList+outHTML+afterPostList
 
-		fs.writeFileSync("./"+year+"/index.html",indexHTML)
-	}
-})
+		return indexHTML
+	}	
+}
 
 function genIndex(year) {
+	console.log("Generating index for "+year)
+	
 	var dir = fs.readdirSync("./"+year)
 	
 	var index = []
 	for (var i = 0; i<dir.length; i++) {
-		var filename = index[i]
-		if (filename.substr(-5) == ".html") {
+		var filename = dir[i]
+		if (filename.substr(-5) == ".html" && filename.substr(-7,2) != "NP" && filename != "index.html") { //NP means "Not Post"
 			var kbData = readKbData("./"+year+"/"+filename)
-			index.push("kbData")			
+			index.push(kbData)			
 		}
 	}
 	
@@ -123,7 +162,7 @@ function genIndex(year) {
 
 function readKbData(filename) {
 	var post = fs.readFileSync(filename,{encoding:"utf-8"})
-
+	console.log("Reading kbData from "+filename)
 	var kbDataStartString = "<!--KBDATA:"
 
 	var kbDataStart = post.indexOf(kbDataStartString)

@@ -444,7 +444,7 @@ if (typeof window == "object") {
 		kbdata.subtitle = collected[2] ? collected[2].replace(/\n/g," ") : "";
 		kbdata['link'] = process.argv[2].replace("PostsToProcess/","");
 		console.log("<!--KBDATA:" + JSON.stringify(kbdata)+"-->");
-		var template = htmlTemplate.toString().split("\n");
+		var template = fs.readFileSync(process.argv[3],"utf-8").split("\n") //htmlTemplate.toString().split("\n");
 		template.pop();
 		template.shift();
 		
