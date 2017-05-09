@@ -1,25 +1,90 @@
+/*
+HOW TO USE
+
+This program helps to take blog posts from tiddlywiki and convert them to the blog format.
+
+This is the basic process for doing this:
+
+1. Export the post from tiddlywiki as an HTML file and and stick it in the "PostsToProcess" directory
+
+2. Run "node processpost.js -p <title post>.html"
+
+3. This will generate an html file in the /<year> directory, as well as updating the index.
+
+After doing this, just commit and push!
+
+
+
+
+
+
+*/
+
+
+
+
 const fs = require("fs")
 const exec = require("child_process").exec
 
-var postname = process.argv[2]
-var postyear = process.argv[3]
+var mode = process.argv[2]
 
-if (!postyear) {
-	var tempDate = new Date()
-	console.log("Year undefined. Setting year to "+tempDate.getFullYear())
-	postyear = tempDate.getFullYear()
-}
+if (mode == "-i" || mode == "--index") {
+	var currentDir = fs.readdirSync("./")
+		
+	var years = []
+	for (var i = 0; i<currentDir.length; i++) {
+		if (!isNaN(parseInt(currentDir[i]))) {
+			years.push(currentDir[i])
+		}		
+	}
+	
+	for (var j = 0; j<years.length; j++) {
+		var year = years[j]
+		updateYearIndex(year)
+	}
+	
+	updateMasterIndex()
+} else if (mode == "-h" || mode == "--help") {
+	console.log("Usage: node processpost.js <flag> [<title>]")
+	console.log("Flags:")
+	console.log("-p --process: process blog post with title <title>")
+	console.log("-i --index: update the index")
+	console.log("-h --help: show the help")
+	console.log("Read the header in processpost.js for detailed help.")
+} else if (mode == "-p" || mode == "--process") {
+	
+	var postname = process.argv[3]
+	var postyear = process.argv[4]
 
-
-
-console.log("Processing "+postname+".html")
-
-exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" post_template.html > "'+postyear+'/'+postname+'.html"',function(error,stdout,stderr) {
-	if (error) {
-		console.error("Error while processing: "+error)
+	if (!postyear) {
+		var tempDate = new Date()
+		console.log("Year undefined. Setting year to "+tempDate.getFullYear())
+		postyear = tempDate.getFullYear()
 	}
 
-	var yearIndex = genIndex(postyear)
+
+
+	console.log("Processing "+postname+".html")
+
+	exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" post_template.html > "'+postyear+'/'+postname+'.html"',function(error,stdout,stderr) {
+		if (error) {
+			console.error("Error while processing: "+error)
+		}
+		
+		
+		updateYearIndex(postyear)//Regenerate the index for just the post year
+		updateMasterIndex() //Regenerate the master index
+	})
+
+} else {
+	console.log("Unrecognized flag. Use -h to display help.")
+}
+
+function updateYearIndex(year) {
+	console.log("Generating index for "+year)
+	genIndex(year)
+
+	var yearIndex = genIndex(year)
 	
 	for (var k =0; k<yearIndex.length; k++) {
 			var post = yearIndex[k]
@@ -27,10 +92,15 @@ exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" p
 			post.link = post.link.substr(5) //remove the YYYY/ that gets inserted	
 	}
 	
-	var yearIndexHTML = genIndexHTML(yearIndex,"./"+postyear+"/index.html")
+	var yearIndexHTML = genIndexHTML(yearIndex,"./"+year+"/index.html")		
+	fs.writeFileSync("./"+year+"/index.html",yearIndexHTML)	
+}
+
+function updateMasterIndex() {
+	console.log("Generating master index")
 	
 	var currentDir = fs.readdirSync("./")
-	
+		
 	var years = []
 	for (var i = 0; i<currentDir.length; i++) {
 		if (!isNaN(parseInt(currentDir[i]))) {
@@ -50,10 +120,8 @@ exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" p
 	}
 	
 	var masterIndexHTML = genIndexHTML(masterIndex,"index.html")
-	
-	fs.writeFileSync("./"+postyear+"/index.html",yearIndexHTML)
 	fs.writeFileSync("index.html",masterIndexHTML)
-})
+}
 
 function genIndexHTML(index,template) {
 	//Generate the html for the home page for the year
@@ -143,8 +211,9 @@ function genIndexHTML(index,template) {
 	}	
 }
 
+
 function genIndex(year) {
-	console.log("Generating index for "+year)
+	//console.log("Generating index for "+year)
 	
 	var dir = fs.readdirSync("./"+year)
 	
