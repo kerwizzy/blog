@@ -13,11 +13,6 @@ This is the basic process for doing this:
 
 After doing this, just commit and push!
 
-
-
-
-
-
 */
 
 
@@ -48,13 +43,15 @@ if (mode == "-i" || mode == "--index") {
 	console.log("Usage: node processpost.js <flag> [<title>]")
 	console.log("Flags:")
 	console.log("-p --process: process blog post with title <title>")
-	console.log("-i --index: update the index")
-	console.log("-h --help: show the help")
+	console.log("-i --index:   update the index")
+	console.log("-h --help:    show the help")
+	console.log("-f --force:   force overwriting")
 	console.log("Read the header in processpost.js for detailed help.")
 } else if (mode == "-p" || mode == "--process") {
 	
 	var postname = process.argv[3]
 	var postyear = process.argv[4]
+	var force = (process.argv[5] == "--force" || process.argv[5] == "-f")
 
 	if (!postyear) {
 		var tempDate = new Date()
@@ -65,17 +62,32 @@ if (mode == "-i" || mode == "--index") {
 
 
 	console.log("Processing "+postname+".html")
-
-	exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" post_template.html > "'+postyear+'/'+postname+'.html"',function(error,stdout,stderr) {
-		if (error) {
-			console.error("Error while processing: "+error)
+	
+	var hasBeenHandModified = false
+	if (fs.existsSync(postyear+"/"+postname+".html") && !force) {
+		var currentData = fs.readFileSync(postyear+"/"+postname+".html")
+		if (currentData.indexOf("<!--HANDMODIFIED") != -1) {
+			console.log("")
+			console.log("PROCESSING STOPPED: "+postname+".html has been hand-edited. Run this command again with --force to force overwriting the file.")
+			hasBeenHandModified = true
+		}
+	}
+	
+	if (!hasBeenHandModified || force) {
+		if (hasBeenHandModified) {
+			console.log("Overwriting "+postyear+"/"+postname+".html")
 		}
 		
-		
-		updateYearIndex(postyear)//Regenerate the index for just the post year
-		updateMasterIndex() //Regenerate the master index
-	})
-
+		exec('node tiddly2blog_node.js "'+postyear+'/PostsToProcess/'+postname+'.html" post_template.html > "'+postyear+'/'+postname+'.html"',function(error,stdout,stderr) {
+			if (error) {
+				console.error("Error while processing: "+error)
+			}
+			
+			
+			updateYearIndex(postyear)//Regenerate the index for just the post year
+			updateMasterIndex() //Regenerate the master index
+		})
+	}
 } else {
 	console.log("Unrecognized flag. Use -h to display help.")
 }
