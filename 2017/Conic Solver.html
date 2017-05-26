@@ -1,4 +1,4 @@
-<!--KBDATA:{"title":"Conic Solver","date":"29th April 2017 at 1:31pm","subtitle":"Using degenerate hyperbolas to solve systems of conics","link":"2017/Conic Solver.html"}-->
+<!--KBDATA:{"title":"Conic Solver","date":"26th May 2017 at 6:13pm","subtitle":"Using degenerate hyperbolas to solve systems of conics","link":"2017/Conic Solver.html"}-->
 <!--HANDMODIFIED-->
 <!DOCTYPE html>
 <html lang="en">
@@ -78,7 +78,7 @@
                     <div class="post-heading">
                         <h1>Conic Solver</h1>
                         <h2 class="subheading">Using degenerate hyperbolas to solve systems of conics</h2>
-                        <span class="meta">Last Updated by <a href="../about.html">Kerwizzy</a> on 29th April 2017 at 2:27pm</span>
+                        <span class="meta">Last Updated by <a href="../about.html">Kerwizzy</a> on 26th May 2017 at 6:13pm</span>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-</p><p>My math chapter this past week was about conics. (ellipses, parabolas, etc.) It said that solving systems of conics (finding the intersection points of two conic equations) was very difficult. I set out to see if there was a simple way, and end up finding an interesting way of solving conic equations.</p><p>The first thing I did was go to a <a href="https://www.desmos.com/calculator">wonderful online graphing calculator</a> I had come across. I then came up with two conic sections at random. The equations were something like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 = 0</strong></h3><h3 class=""><strong>4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10 = 0</strong></h3><p>(These weren't the exact equations I used then, but they are a good, simple example)</p><p>I then entered these equations into the graphing calculator, and ended up with something like this:</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-BasicGraph.jpg"></p><p>So far so good. Then I started experimenting. First I tried making a new function by subtracting one equation from the other. I entered an equation like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – (4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0 </strong></h3><p>This equation generated a graph like this: (the green line represents the above equation)</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-GraphWithSubtracted1.jpg"></p><p>&quot;Hmm,&quot; I thought, &quot;The green line has a different shape than the blue hyperbola, but it intersects the ellipse at the same points. What if we subtracted the second equation again?&quot;</p><p>I tried doing this, and then realized I could simplify things by making an equation like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – n(4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0 </strong></h3><p>I tried changing the value of <em>n</em>, and discovered an interesting (but obvious when you think about it) property:  when n changes, the shape of the green line changes, but the intersection points do not. I noticed there was a value of <em>n</em> at which the two parts of the green hyperbola came so close together that it looked like two intersecting lines. (This is called a <a href="https://en.wikipedia.org/wiki/Degenerate_conic">Degenerate Hyperbola</a>) If you look at this graph you'll see what I mean:</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-GraphWithDegenerate.jpg"></p><p class="kb-caption"><em>The green line is the graph of x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – n(4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0, where n = -1.9151747333913018</em></p><p>And then suddenly I had an idea: if we can find the value of n that makes the green conic degenerate, then we can easily solve systems of conic equations, because it is very easy to find the intersection between a conic and a line (such as the two lines of a degenerate hyperbola). I set out to write a little program in Javascript to see if this method of solving conics would work. It does, and after a bit of improvements, my program was able to solve any system of conics.</p><p>Here is how my program works:</p><ol><li>The user enters the coefficients of the two conic equations. By convention, these are called A,B,C,D,E, and F, where Ax<sup>2</sup> + Bxy + Cy<sup>2</sup> + Dx + Ey + F = 0</li><li>A value of <em>n</em> is found so that the resulting conic will be degenerate. A conic is degenerate when the determinant of the matrix <div>
+</p><p>My math chapter this past week was about conics. (ellipses, parabolas, etc.) It said that solving systems of conics (finding the intersection points of two conic equations) was very difficult. I set out to see if there was a simple way, and ended up finding an interesting method for solving conic equations.</p><p>The first thing I did was go to a <a href="https://www.desmos.com/calculator">wonderful online graphing calculator</a> I had come across. I then came up with two conic sections at random. The equations were something like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 = 0</strong></h3><h3 class=""><strong>4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10 = 0</strong></h3><p>(These weren't the exact equations I used then, but they are a good, simple example)</p><p>I then entered these equations into the graphing calculator, and ended up with something like this:</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-BasicGraph.jpg"></p><p>So far so good. Then I started experimenting. First I tried making a new function by subtracting one equation from the other. I entered an equation like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – (4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0 </strong></h3><p>This equation generated a graph like this: (the green line represents the above equation)</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-GraphWithSubtracted1.jpg"></p><p>&quot;Hmm,&quot; I thought, &quot;The green line has a different shape than the blue hyperbola, but it intersects the ellipse at the same points. What if we subtracted the second equation again?&quot;</p><p>I tried doing this, and then realized I could simplify things by making an equation like this:</p><h3 class=""><strong>x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – n(4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0 </strong></h3><p>I tried changing the value of <em>n</em>, and discovered an interesting (but obvious when you think about it) property:  when n changes, the shape of the green line changes, but the intersection points do not. I noticed there was a value of <em>n</em> at which the two parts of the green hyperbola came so close together that it looked like two intersecting lines. (This is called a <a href="https://en.wikipedia.org/wiki/Degenerate_conic">Degenerate Hyperbola</a>) If you look at this graph you'll see what I mean:</p><p><img src="KerwizzyBlogData/An_Interesting_Way_of_Solving_Conics-GraphWithDegenerate.jpg"></p><p class="kb-caption"><em>The green line is the graph of x<sup>2</sup> + 2xy + 3y<sup>2</sup> – 5x + y – 17 – n(4x<sup>2</sup> – 6xy – 5y<sup>2</sup> – 2x + 3y + 10) = 0, where n = -1.9151747333913018</em></p><p>And then suddenly I had an idea: if we can find the value of n that makes the green conic degenerate, then we can easily solve systems of conic equations, because it is very easy to find the intersection between a conic and a line (such as the two lines of a degenerate hyperbola). I set out to write a little program in Javascript to see if this method of solving conics would work. It does, and after a bit of improvements, my program was able to solve any system of conics.</p><p>Here is how my program works:</p><ol><li>The user enters the coefficients of the two conic equations. By convention, these are called A,B,C,D,E, and F, where Ax<sup>2</sup> + Bxy + Cy<sup>2</sup> + Dx + Ey + F = 0</li><li>A value of <em>n</em> is found so that the resulting conic will be degenerate. A conic is degenerate when the determinant of the matrix <div>
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mstyle displaystyle="true">
     <mrow>
@@ -161,7 +161,7 @@
 <div>
 is equal to 0. Since we want to make this matrix equal zero after n has been distributed, the actual values that get entered into the matrix are (A-na), (B-nb), etc., where A-F are the coefficients of the first equation and a-f are the coefficients of the second equation. Finding a value of n that makes this matrix equal zero is equivalent to solving a cubic function. There is a <a href="https://math.vanderbilt.edu/schectex/courses/cubic/">formula to solve cubics</a>, but at the moment my program simply performs an iterative search to find a suitable value of n.
 </div>
-</div></li><li>Once the value of n has been found, the program distributes n and simplifies the equation, producing a new set of coefficients.</li><li>If the xy-coefficent (B) is not zero, the conic is rotated to a new coordinate system, removing the B term</li><li>The equations of the lines of the hyperbola are calculated, first in the rotated coordinate system. Then they are rotated back to the standard coordinate system.</li><li>The equation of the first line is substituted into one of the original conic equations. This produces a quadratic equation in terms of x. The quadratic formula is used to find the x-coordinates of one set of intersections.</li><li>The x-values generated in the previous step are substituted into the equation for the line, producing two y-values</li><li>Steps 6 and 7 are repeated for the second arm of the hyperbola, generating another set of intersection points.</li><li>The intersection points are returned to the user.</li></ol><p>There are a few other parts of the process (for instance, sometimes the degenerate function is actually a degenerate parabola or ellipse instead of a hyperbola) but this is the basic method by which my program calculates the intersection points of two conic equations.</p><p>Now you may be wondering, &quot;Is this some new method of solving conics?&quot; I have asked this question myself, and I have not found an entirely satisfactory answer. There are many different ways of solving general systems of conics. A fairly obvious (but tedious) method is to use the quadratic formula to find values of y, and then substitute these values into the original equation, then solve for x. (You may then need to substitute the x values back again to find the actual y values. I'm not really sure – I haven't tried out this idea very much) Also, I don't know a lot about linear algebra, and there may be other, better ways of solving systems of conics. (My method does involve solving a cubic, after all)</p><p>In any case, it doesn't seem like I have discovered something revolutionary. I have found <a href="https://en.wikipedia.org/wiki/Quartic_function#Solving_with_algebraic_geometry">something that seems similar</a>. It is a method for solving quartic equations (equations that contain an x<sup>4</sup> term), and says that the method finds &quot;three [degenerate conics] (pairs of lines)&quot; in order to calculate the roots of the equation.</p><p>Anyway, even if I didn't make a mathematical discovery, it was a neat project and I learned something about math that wasn't part of my regular course. To wrap things up, I have embedded my solver below so you can try it for yourself! Below that is the Javascript code for the solver.</p>
+</div></li><li>Once the value of n has been found, the program distributes n and simplifies the equation, producing a new set of coefficients.</li><li>If the xy-coefficent (B) is not zero, the conic is rotated to a new coordinate system, removing the B term</li><li>The equations of the lines of the hyperbola are calculated, first in the rotated coordinate system. Then they are rotated back to the standard coordinate system.</li><li>The equation of the first line is substituted into one of the original conic equations. This produces a quadratic equation in terms of x. The quadratic formula is used to find the x-coordinates of two intersection points.</li><li>The x-values generated in the previous step are substituted into the equation for the line, producing two y-values</li><li>Steps 6 and 7 are repeated for the second arm of the hyperbola, generating another set of intersection points.</li><li>The intersection points are returned to the user.</li></ol><p>There are a few other parts of the process (for instance, sometimes the degenerate conic is actually a degenerate parabola or ellipse instead of a hyperbola) but this is the basic method by which my program calculates the intersection points of two conic equations.</p><p>Now you may be wondering, &quot;Is this some new method of solving conics?&quot; I have asked this question myself, and I have not found an entirely satisfactory answer. There are many different ways of solving general systems of conics. A fairly obvious (but tedious) method is to use the quadratic formula to find the value of y in terms of x, and then substitute these values into the original equation, then solve for x. (You may then need to substitute the x values back again to find the actual y values. I'm not really sure – I haven't tried out this idea very much) Also, I don't know a lot about linear algebra, and there may be other, better ways of solving systems of conics. (My method does involve solving a cubic, after all)</p><p>In any case, it doesn't seem like I have discovered something revolutionary. I have found <a href="https://en.wikipedia.org/wiki/Quartic_function#Solving_with_algebraic_geometry">something that seems similar</a>. It is a method for solving quartic equations (equations that contain an x<sup>4</sup> term), and says that the method finds &quot;three [degenerate conics] (pairs of lines)&quot; in order to calculate the roots of the equation.</p><p>Anyway, even if I didn't make a mathematical discovery, it was a neat project and I learned something about math that wasn't part of my regular course. To wrap things up, I have embedded my solver below so you can try it for yourself! Below that is the Javascript code for the solver.</p>
 <BR>
 <hr>
 Comment on <a href='https://twitter.com/kerwizzy'>Twitter</a>
@@ -392,6 +392,7 @@ class Conic {
 			
 			outPoints = [[x,y]]			
 		} else {
+			//STEP 1: Get the coefficients		
 			var A = this.a
 			var B = this.b
 			var C = this.c
@@ -406,6 +407,9 @@ class Conic {
 			var e = conic.e
 			var f = conic.f
 			
+			
+			//STEP 2: Solve for N
+			//First create a function that calculates the determinant of the matrix for a certain value of n
 			var determinantFunction = function(n) {
 				var a1 = A-n*a
 				var b1 = (B-n*b)/2
@@ -418,11 +422,12 @@ class Conic {
 				return Q
 			}
 			
-			
+			//Then use the determinant function and the iterative zero-finding algorithm to find a value of n that makes the determinant = 0
 			var N = Conic.findZero(determinantFunction,a*A+b*B+c*C)
 			console.log("n = "+N)
 			debugData.n = N
 			
+			//STEP 3: Distribute n to find the new coefficients
 			var sa = A-N*a
 			var sb = B-N*b
 			var sc = C-N*c
@@ -433,6 +438,8 @@ class Conic {
 			console.log("Solved Values: "+[sa,sb,sc,sd,se,sf].join(" "))
 			debugData.solvedValues = [sa,sb,sc,sd,se,sf]
 			
+			//STEP 4: Calculate the coefficients in the rotated coordinate system
+			//First calculate the necessary rotation angle
 			var theta = Math.atan(sb/(sc-sa))/2
 			
 			debugData.theta = theta
@@ -441,10 +448,13 @@ class Conic {
 			console.log("Rotation Angle (Slope):"+Math.tan(theta))
 			
 
+			
+			
 			//Values of coefficients in rotated equation
 			
 			//These were copied from http://www.mathamazement.com/Lessons/Pre-Calculus/09_Conic-Sections-and-Analytic-Geometry/rotation-of-axes.html
 
+			//Then calculate the coefficents in the new coordinate system. (rb should now be 0)
 			var ra = (sa+sc)/2+((sa-sc)/2)*Math.cos(2*theta)-(sb/2)*Math.sin(2*theta)
 			var rb = (sa - sc)*Math.sin(2*theta) + sb*Math.cos(2*theta)
 			var rc = (sa + sc)/2 + ((sc - sa)/2)*Math.cos(2*theta) + (sb/2)*Math.sin(2*theta)
@@ -466,11 +476,14 @@ class Conic {
 			var rf = sf
 			*/
 			
+			
+			
 			console.log("Rotated Values: "+[ra,rb,rc,rd,re,rf].join(" "))
 			debugData.rotatedValues = [ra,rb,rc,rd,re,rf]
 			
+			//Debug code to make sure the rotation was performed correctly.
 			var rotatedH = (-rd)/(2*ra)
-			var rotatedK = (-re)/(2*rc)
+			var rotatedK = (-re)/(2*rc)			
 			
 			console.log("Rotated h,k: "+rotatedH+","+rotatedK)
 			debugData.rotatedH = rotatedH
@@ -489,7 +502,8 @@ class Conic {
 			debugData.h = h
 			debugData.k = k
 			
-			
+			//STEPS 5-8: Calculate the equations of the lines, rotate, and substitute
+			//First figure out what kind of degenerate conic it is the discriminant (b^2-4ac)
 			var discriminant = sb*sb-4*sa*sc
 			if (discriminant > 0) { //hyperbola	
 				console.log("HYPERBOLA")
@@ -578,6 +592,7 @@ class Conic {
 			
 			
 		}
+		
 		var clippedPoints = []
 		for (var j = 0; j<outPoints.length; j++) {//Clip out points that are too far away, as they probably result from rounding errors.
 			var x = outPoints[j][0]
@@ -587,6 +602,8 @@ class Conic {
 				clippedPoints.push([x,y])
 			}
 		}
+		
+		//STEP 9: Return the values.
 		return {points:clippedPoints,debugData:debugData}
 	}
 	
@@ -733,9 +750,9 @@ HOW TO USE
    intersection points. This method returns an
    object of the form: 
    {
-	   points:&lt;array of intersection points 
-	          represented as two-element arrays&gt;,
-	   debugData:&lt;debug data object&gt;
+	   points:< array of intersection points 
+	          represented as two-element arrays >,
+	   debugData:< debug data object >
    }
    Read the code below for what values are stored in
    debugData.
@@ -761,43 +778,43 @@ class Conic {
 		var e = this.e
 		var f = this.f
 		
-		var signA = (a &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
-		var signB = (b &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
-		var signC = (c &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
-		var signD = (d &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
-		var signE = (e &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
-		var signF = (f &gt;= 0 ? &quot;+&quot; : &quot;-&quot;)
+		var signA = (a >= 0 ? "+" : "-")
+		var signB = (b >= 0 ? "+" : "-")
+		var signC = (c >= 0 ? "+" : "-")
+		var signD = (d >= 0 ? "+" : "-")
+		var signE = (e >= 0 ? "+" : "-")
+		var signF = (f >= 0 ? "+" : "-")
 		
-		var out = &quot;&quot;
+		var out = ""
 		if (a != 0) {
-			out += signA+&quot; &quot;+Math.abs(a)+&quot;x&lt;sup&gt;2&lt;/sup&gt; &quot;
+			out += signA+" "+Math.abs(a)+"x<sup>2</sup> "
 		}
 		
 		if (b != 0) {
-			out += signB+&quot; &quot;+Math.abs(b)+&quot;xy &quot;
+			out += signB+" "+Math.abs(b)+"xy "
 		}
 		
 		if (c != 0) {
-			out += signC+&quot; &quot;+Math.abs(c)+&quot;y&lt;sup&gt;2&lt;/sup&gt; &quot;
+			out += signC+" "+Math.abs(c)+"y<sup>2</sup> "
 		}
 		
 		if (d != 0) {
-			out += signD+&quot; &quot;+Math.abs(d)+&quot;x &quot;
+			out += signD+" "+Math.abs(d)+"x "
 		}
 		
 		if (e != 0) {
-			out += signE+&quot; &quot;+Math.abs(e)+&quot;y &quot;
+			out += signE+" "+Math.abs(e)+"y "
 		}
 		
 		if (f != 0) {
-			out += signF+&quot; &quot;+Math.abs(f)+&quot; &quot;
+			out += signF+" "+Math.abs(f)+" "
 		}
 		
-		if (out.substr(0,1) == &quot;+&quot;) {
-			out = out.substr(2) //Remove the &quot;+ &quot; at the beginning of the string
+		if (out.substr(0,1) == "+") {
+			out = out.substr(2) //Remove the "+ " at the beginning of the string
 		}
 		
-		return out + &quot;= 0&quot;
+		return out + "= 0"
 
 		
 	}
@@ -811,7 +828,7 @@ class Conic {
 		var f = this.f
 	
 		var determinant = b*b-4*a*c
-		if (determinant &lt; 0) {
+		if (determinant < 0) {
 			return -1
 		} else if (determinant == 0) {
 			return 0
@@ -829,13 +846,13 @@ class Conic {
 		while (!done) {
 			var m = (f(x+mDelta)-f(x))/(mDelta)
 			var fx = f(x)
-			if (fx &gt; 0) {
+			if (fx > 0) {
 				x -= fx/m
 			} else {
 				x += Math.abs(fx)/m
 			}
 			
-			if (Math.abs(fx) &lt; 0.0000001 || i &gt; 100) {
+			if (Math.abs(fx) < 0.0000001 || i > 100) {
 				done = true
 			}
 			i++
@@ -855,7 +872,7 @@ class Conic {
 	}
 	
 	get isLine() {
-		return (this.a == 0 &amp;&amp; this.b == 0 &amp;&amp; this.c == 0)
+		return (this.a == 0 && this.b == 0 && this.c == 0)
 		
 	}
 	
@@ -873,7 +890,7 @@ class Conic {
 		var C = c*n*n+n*e+f
 		
 		var discriminant = B*B-4*A*C
-		if (discriminant &lt; 0) {
+		if (discriminant < 0) {
 			return []
 		} else if (discriminant == 0) {
 			var x1 = (-B/(2*A))
@@ -894,17 +911,17 @@ class Conic {
 	intersect(conic) {
 		var outPoints = []
 		var debugData = {}
-		if (this.isLine &amp;&amp; !conic.isLine) {
+		if (this.isLine && !conic.isLine) {
 			var m = -this.d/this.e
 			var b = -this.f/this.e
 			
 			outPoints = conic.lineIntersect(m,b)
-		} else if (!this.isLine &amp;&amp; conic.isLine) {
+		} else if (!this.isLine && conic.isLine) {
 			var m = -conic.d/conic.e
 			var b = -conic.f/conic.e
 			
 			outPoints = this.lineIntersect(m,b)			
-		} else if (this.isLine &amp;&amp; conic.isLine) {
+		} else if (this.isLine && conic.isLine) {
 			/*
 			mx+b
 			jx+k
@@ -927,6 +944,7 @@ class Conic {
 			
 			outPoints = [[x,y]]			
 		} else {
+			//STEP 1: Get the coefficients		
 			var A = this.a
 			var B = this.b
 			var C = this.c
@@ -941,6 +959,9 @@ class Conic {
 			var e = conic.e
 			var f = conic.f
 			
+			
+			//STEP 2: Solve for N
+			//First create a function that calculates the determinant of the matrix for a certain value of n
 			var determinantFunction = function(n) {
 				var a1 = A-n*a
 				var b1 = (B-n*b)/2
@@ -953,11 +974,12 @@ class Conic {
 				return Q
 			}
 			
-			
+			//Then use the determinant function and the iterative zero-finding algorithm to find a value of n that makes the determinant = 0
 			var N = Conic.findZero(determinantFunction,a*A+b*B+c*C)
-			console.log(&quot;n = &quot;+N)
+			console.log("n = "+N)
 			debugData.n = N
 			
+			//STEP 3: Distribute n to find the new coefficients
 			var sa = A-N*a
 			var sb = B-N*b
 			var sc = C-N*c
@@ -965,22 +987,26 @@ class Conic {
 			var se = E-N*e
 			var sf = F-N*f
 			
-			console.log(&quot;Solved Values: &quot;+[sa,sb,sc,sd,se,sf].join(&quot; &quot;))
+			console.log("Solved Values: "+[sa,sb,sc,sd,se,sf].join(" "))
 			debugData.solvedValues = [sa,sb,sc,sd,se,sf]
 			
-			console.log(sa,sb,sc,sd,se,sf)
+			//STEP 4: Calculate the coefficients in the rotated coordinate system
+			//First calculate the necessary rotation angle
 			var theta = Math.atan(sb/(sc-sa))/2
 			
 			debugData.theta = theta
 			
-			console.log(&quot;Rotation Angle (Radians):&quot;+theta)
-			console.log(&quot;Rotation Angle (Slope):&quot;+Math.tan(theta))
+			console.log("Rotation Angle (Radians):"+theta)
+			console.log("Rotation Angle (Slope):"+Math.tan(theta))
 			
 
+			
+			
 			//Values of coefficients in rotated equation
 			
 			//These were copied from http://www.mathamazement.com/Lessons/Pre-Calculus/09_Conic-Sections-and-Analytic-Geometry/rotation-of-axes.html
 
+			//Then calculate the coefficents in the new coordinate system. (rb should now be 0)
 			var ra = (sa+sc)/2+((sa-sc)/2)*Math.cos(2*theta)-(sb/2)*Math.sin(2*theta)
 			var rb = (sa - sc)*Math.sin(2*theta) + sb*Math.cos(2*theta)
 			var rc = (sa + sc)/2 + ((sc - sa)/2)*Math.cos(2*theta) + (sb/2)*Math.sin(2*theta)
@@ -1002,41 +1028,37 @@ class Conic {
 			var rf = sf
 			*/
 			
-			console.log(&quot;Rotated Values: &quot;+[ra,rb,rc,rd,re,rf].join(&quot; &quot;))
+			
+			
+			console.log("Rotated Values: "+[ra,rb,rc,rd,re,rf].join(" "))
 			debugData.rotatedValues = [ra,rb,rc,rd,re,rf]
 			
+			//Debug code to make sure the rotation was performed correctly.
 			var rotatedH = (-rd)/(2*ra)
-			var rotatedK = (-re)/(2*rc)
+			var rotatedK = (-re)/(2*rc)			
 			
-			console.log(&quot;Rotated h,k: &quot;+rotatedH+&quot;,&quot;+rotatedK)
+			console.log("Rotated h,k: "+rotatedH+","+rotatedK)
 			debugData.rotatedH = rotatedH
 			debugData.rotatedK = rotatedK
 			
-			console.log(&quot;Dist: &quot;+Math.sqrt(rotatedH*rotatedH+rotatedK*rotatedK))
+			console.log("Dist: "+Math.sqrt(rotatedH*rotatedH+rotatedK*rotatedK))
 
 			
 			var h = rotatedH*Math.cos(-theta)-rotatedK*Math.sin(-theta)
 			var k = rotatedH*Math.sin(-theta)+rotatedK*Math.cos(-theta)
 			
-			console.log(&quot;Dist: &quot;+Math.sqrt(h*h+k*k))
+			console.log("Dist: "+Math.sqrt(h*h+k*k))
 			
 			
-			console.log(&quot;h,k: &quot;+h+&quot;,&quot;+k)
+			console.log("h,k: "+h+","+k)
 			debugData.h = h
 			debugData.k = k
 			
-			/*
-			TODO:
-			
-			Fix the math in the parabola section to correspond to the fixes in the hyperbola section:
-			* Inverse rotations are supposed to have negative thetas in them
-			* Inverse rotations of slopes should also have negative thetas (that is, theta should be subtracted)
-			
-			*/
-			
+			//STEPS 5-8: Calculate the equations of the lines, rotate, and substitute
+			//First figure out what kind of degenerate conic it is the discriminant (b^2-4ac)
 			var discriminant = sb*sb-4*sa*sc
-			if (discriminant &gt; 0) { //hyperbola	
-				console.log(&quot;HYPERBOLA&quot;)
+			if (discriminant > 0) { //hyperbola	
+				console.log("HYPERBOLA")
 			
 				var rotatedSlope1 = Math.sqrt(Math.abs(ra/rc))
 				var rotatedSlope2 = -rotatedSlope1
@@ -1056,10 +1078,10 @@ class Conic {
 				var swapCoords = false
 				var intersectionConic
 				if (ra == 0) {//opens x
-					console.log(&quot;X PARABOLA&quot;)
+					console.log("X PARABOLA")
 					intersectionConic = this
 				} else if (rc == 0) {
-					console.log(&quot;Y PARABOLA&quot;)
+					console.log("Y PARABOLA")
 					swapCoords = true;
 					var tempra = ra //swap the x and y values so we don't end up with vertical lines.
 					ra = rc
@@ -1069,11 +1091,11 @@ class Conic {
 					re = temprd
 					intersectionConic = this.swap()
 				} else {
-					console.log(&quot;THIS WASN'T SUPPOSED TO HAPPEN! FIXME!&quot;)
+					console.log("THIS WASN'T SUPPOSED TO HAPPEN! FIXME!")
 					outPoints = [[0,0]]
 				}
 				
-				var pa = rc // /rd &lt;- rd may always be 0?
+				var pa = rc // /rd <- rd may always be 0?
 				var pb = re // /rd
 				var pc = rf // /rd
 				
@@ -1099,7 +1121,7 @@ class Conic {
 				
 				var out =  l1Points.concat(l2Points)
 				if (swapCoords) {
-					for (var i = 0; i&lt;out.length; i++) {
+					for (var i = 0; i<out.length; i++) {
 						var xVal = out[i][0]
 						var yVal = out[i][1]
 						out[i][0] = yVal
@@ -1107,30 +1129,33 @@ class Conic {
 					}
 				}
 				outPoints = out
-			} else if (discriminant &lt; 0) {//degenerate ellipse
-				console.log(&quot;ELLIPSE&quot;)
+			} else if (discriminant < 0) {//degenerate ellipse
+				console.log("ELLIPSE")
 				var valueAtPoint = this.a*h*h+this.b*h*k+this.c*k*k+this.d*h+this.e*k+this.f
-				if (Math.abs(valueAtPoint) &lt; 0.001) {
+				if (Math.abs(valueAtPoint) < 0.001) {
 					outPoints = [[h,k]]
 				} else {
 					outPoints = []
 				}
 			} else {
-				console.log(&quot;Couldn't solve degenerate conic.&quot;)
+				console.log("Couldn't solve degenerate conic.")
 				outPoints = []
 			}
 			
 			
 		}
+		
 		var clippedPoints = []
-		for (var j = 0; j&lt;outPoints.length; j++) {//Clip out points that are too far away, as they probably result from rounding errors.
+		for (var j = 0; j<outPoints.length; j++) {//Clip out points that are too far away, as they probably result from rounding errors.
 			var x = outPoints[j][0]
 			var y = outPoints[j][1]
 			
-			if (x+y &lt; 500000) {
+			if (x+y < 500000) {
 				clippedPoints.push([x,y])
 			}
 		}
+		
+		//STEP 9: Return the values.
 		return {points:clippedPoints,debugData:debugData}
 	}
 	
