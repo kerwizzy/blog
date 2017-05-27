@@ -750,9 +750,9 @@ HOW TO USE
    intersection points. This method returns an
    object of the form: 
    {
-	   points:< array of intersection points 
-	          represented as two-element arrays >,
-	   debugData:< debug data object >
+	   points:&lt;array of intersection points 
+	          represented as two-element arrays&gt;,
+	   debugData:&lt;debug data object&gt;
    }
    Read the code below for what values are stored in
    debugData.
@@ -778,16 +778,16 @@ class Conic {
 		var e = this.e
 		var f = this.f
 		
-		var signA = (a >= 0 ? "+" : "-")
-		var signB = (b >= 0 ? "+" : "-")
-		var signC = (c >= 0 ? "+" : "-")
-		var signD = (d >= 0 ? "+" : "-")
-		var signE = (e >= 0 ? "+" : "-")
-		var signF = (f >= 0 ? "+" : "-")
+		var signA = (a &gt;= 0 ? "+" : "-")
+		var signB = (b &gt;= 0 ? "+" : "-")
+		var signC = (c &gt;= 0 ? "+" : "-")
+		var signD = (d &gt;= 0 ? "+" : "-")
+		var signE = (e &gt;= 0 ? "+" : "-")
+		var signF = (f &gt;= 0 ? "+" : "-")
 		
 		var out = ""
 		if (a != 0) {
-			out += signA+" "+Math.abs(a)+"x<sup>2</sup> "
+			out += signA+" "+Math.abs(a)+"x&lt;sup&gt;2&lt;/sup&gt; "
 		}
 		
 		if (b != 0) {
@@ -795,7 +795,7 @@ class Conic {
 		}
 		
 		if (c != 0) {
-			out += signC+" "+Math.abs(c)+"y<sup>2</sup> "
+			out += signC+" "+Math.abs(c)+"y&lt;sup&gt;2&lt;/sup&gt; "
 		}
 		
 		if (d != 0) {
@@ -828,7 +828,7 @@ class Conic {
 		var f = this.f
 	
 		var determinant = b*b-4*a*c
-		if (determinant < 0) {
+		if (determinant &lt; 0) {
 			return -1
 		} else if (determinant == 0) {
 			return 0
@@ -846,13 +846,13 @@ class Conic {
 		while (!done) {
 			var m = (f(x+mDelta)-f(x))/(mDelta)
 			var fx = f(x)
-			if (fx > 0) {
+			if (fx &gt; 0) {
 				x -= fx/m
 			} else {
 				x += Math.abs(fx)/m
 			}
 			
-			if (Math.abs(fx) < 0.0000001 || i > 100) {
+			if (Math.abs(fx) &lt; 0.0000001 || i &gt; 100) {
 				done = true
 			}
 			i++
@@ -890,7 +890,7 @@ class Conic {
 		var C = c*n*n+n*e+f
 		
 		var discriminant = B*B-4*A*C
-		if (discriminant < 0) {
+		if (discriminant &lt; 0) {
 			return []
 		} else if (discriminant == 0) {
 			var x1 = (-B/(2*A))
@@ -1057,7 +1057,7 @@ class Conic {
 			//STEPS 5-8: Calculate the equations of the lines, rotate, and substitute
 			//First figure out what kind of degenerate conic it is the discriminant (b^2-4ac)
 			var discriminant = sb*sb-4*sa*sc
-			if (discriminant > 0) { //hyperbola	
+			if (discriminant &gt; 0) { //hyperbola	
 				console.log("HYPERBOLA")
 			
 				var rotatedSlope1 = Math.sqrt(Math.abs(ra/rc))
@@ -1095,7 +1095,7 @@ class Conic {
 					outPoints = [[0,0]]
 				}
 				
-				var pa = rc // /rd <- rd may always be 0?
+				var pa = rc // /rd &lt;- rd may always be 0?
 				var pb = re // /rd
 				var pc = rf // /rd
 				
@@ -1121,7 +1121,7 @@ class Conic {
 				
 				var out =  l1Points.concat(l2Points)
 				if (swapCoords) {
-					for (var i = 0; i<out.length; i++) {
+					for (var i = 0; i&lt;out.length; i++) {
 						var xVal = out[i][0]
 						var yVal = out[i][1]
 						out[i][0] = yVal
@@ -1129,10 +1129,10 @@ class Conic {
 					}
 				}
 				outPoints = out
-			} else if (discriminant < 0) {//degenerate ellipse
+			} else if (discriminant &lt; 0) {//degenerate ellipse
 				console.log("ELLIPSE")
 				var valueAtPoint = this.a*h*h+this.b*h*k+this.c*k*k+this.d*h+this.e*k+this.f
-				if (Math.abs(valueAtPoint) < 0.001) {
+				if (Math.abs(valueAtPoint) &lt; 0.001) {
 					outPoints = [[h,k]]
 				} else {
 					outPoints = []
@@ -1146,11 +1146,11 @@ class Conic {
 		}
 		
 		var clippedPoints = []
-		for (var j = 0; j<outPoints.length; j++) {//Clip out points that are too far away, as they probably result from rounding errors.
+		for (var j = 0; j&lt;outPoints.length; j++) {//Clip out points that are too far away, as they probably result from rounding errors.
 			var x = outPoints[j][0]
 			var y = outPoints[j][1]
 			
-			if (x+y < 500000) {
+			if (x+y &lt; 500000) {
 				clippedPoints.push([x,y])
 			}
 		}
